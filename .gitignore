@@ -1,0 +1,4 @@
+plugin_requirements.txt
+/configuration
+/env
+.vscode
