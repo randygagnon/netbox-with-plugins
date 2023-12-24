@@ -1,0 +1,35 @@
+name: Netbox with plugins
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Dockerfile'
+      - 'plugin_requirements.txt'
+      - '.github/workflows/**'
+
+env:
+  IMAGE_NAME: netbox-plugins
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag $IMAGE_NAME:latest
+
+    - name: Log into registry
+      run: echo "${{ secrets.GHRC_TOKEN }}" | docker login -u ${{ secrets.GHRC_USERNAME }} --password-stdin
+  
+    - name: Push image
+      run: |
+          IMAGE_ID=$(echo ${{ github.repository }} | sed -e 's#/.*##')/$IMAGE_NAME
+          BASE_IMAGE_TAG=$(grep 'FROM ' Dockerfile | head -n 1 | sed -e 's#^.*:##')
+          docker tag $IMAGE_NAME:latest $IMAGE_ID:$BASE_IMAGE_TAG
+          docker push $IMAGE_ID:$BASE_IMAGE_TAG

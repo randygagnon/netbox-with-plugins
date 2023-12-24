@@ -1,0 +1,10 @@
+version: '3.4'
+services:
+  netbox:
+    image: ghcr.io/randygagnon/netbox-plugins:${TAG}
+    ports:
+      - "8080:8080"
+  netbox-worker:
+    image: ghcr.io/randygagnon/netbox-plugins:${TAG}
+  netbox-housekeeping:
+    image: ghcr.io/randygagnon/netbox-plugins:${TAG}
